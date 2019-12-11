@@ -18,6 +18,6 @@ namespace Museclone
 
         public override bool SupportsSharedUsage => true;
 
-        public override ChartFactory CreateChartFactory() => new MusecloneChartFactory();
+        public override ChartFactory CreateChartFactory() => MusecloneChartFactory.Instance;
     }
 }

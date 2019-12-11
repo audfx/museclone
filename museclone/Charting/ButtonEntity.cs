@@ -2,7 +2,7 @@
 
 namespace Museclone.Charting
 {
-    public sealed class PedalEntity : Entity
+    public sealed class ButtonEntity : Entity
     {
     }
 }

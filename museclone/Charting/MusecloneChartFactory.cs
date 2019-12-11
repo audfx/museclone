@@ -4,12 +4,14 @@ namespace Museclone.Charting
 {
     public sealed class MusecloneChartFactory : ChartFactory
     {
+        public static readonly MusecloneChartFactory Instance = new MusecloneChartFactory();
+
         public override Chart CreateNew()
         {
             var chart = new Chart(MusecloneGameMode.Instance);
-            chart.CreateTypedLane<PedalEntity>(0, EntityRelation.Equal);
-            for (int i = 1; i < 6; i++)
-                chart.CreateTypedLane<SpinnerEntity>(i, EntityRelation.Equal);
+            for (int i = 0; i < 5; i++)
+                chart.CreateMultiTypedLane<ButtonEntity, SpinnerEntity>(i);
+            chart.CreateTypedLane<ButtonEntity>(5);
 
             return chart;
         }
