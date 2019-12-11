@@ -348,6 +348,10 @@ namespace Museclone.Charting.Conversions
                 tick_t startTicks = chart.CalcTickFromTime(entity.StartTimeMillis / 1000.0);
                 tick_t endTicks = chart.CalcTickFromTime(entity.EndTimeMillis / 1000.0);
 
+                const int q = 192;
+                startTicks = MathL.Round((double)(startTicks * q)) / q;
+                endTicks = MathL.Round((double)(endTicks * q)) / q;
+
                 tick_t durTicks = endTicks - startTicks;
 
                 if (entity.Kind == 1 && entity.Type == 5)
