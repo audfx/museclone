@@ -210,9 +210,10 @@ namespace Museclone.Charting.Conversions
                 tick_t position = chart.CalcTickFromTime(info.MusecaWhen / 1000.0);
 
                 var cp = chart.ControlPoints.GetOrCreate(position, true);
-                cp.BeatsPerMinute = info.BeatsPerMinute;
+                if (info.BeatsPerMinute > 0)
+                    cp.BeatsPerMinute = info.BeatsPerMinute;
 
-                if (cp.BeatCount != info.Numerator || cp.BeatKind != info.Denominator)
+                if (info.Numerator != 0 && info.Denominator != 0 && (cp.BeatCount != info.Numerator || cp.BeatKind != info.Denominator))
                 {
                     cp = chart.ControlPoints.GetOrCreate(MathL.Ceil((double)position), true);
                     cp.BeatCount = info.Numerator;
@@ -362,20 +363,20 @@ namespace Museclone.Charting.Conversions
                         // large spinner
                         case 2:
                         {
-                            var e = chart[entity.Type - 6].Add<SpinnerEntity>(startTicks);
+                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks);
                             e.Large = true;
                         } break;
                         // large spinner left
                         case 3:
                         {
-                            var e = chart[entity.Type - 6].Add<SpinnerEntity>(startTicks);
+                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks);
                             e.Direction = LinearDirection.Left;
                             e.Large = true;
                         } break;
                         // large spinner right
                         case 4:
                         {
-                            var e = chart[entity.Type - 6].Add<SpinnerEntity>(startTicks);
+                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks);
                             e.Direction = LinearDirection.Right;
                             e.Large = true;
                         } break;

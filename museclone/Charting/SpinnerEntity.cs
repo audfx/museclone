@@ -2,6 +2,7 @@
 
 namespace Museclone.Charting
 {
+    [EntityType("Spinner")]
     public sealed class SpinnerEntity : Entity
     {
         public bool Large = false;
