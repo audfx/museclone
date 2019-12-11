@@ -11,6 +11,7 @@ namespace Museclone
 
         static MscClient()
         {
+            DefaultResourceLocator.AddManifestResourceLoader(ManifestResourceLoader.GetResourceLoader(typeof(ClientResourceLocator).Assembly, "theori.Resources"));
             DefaultResourceLocator.AddManifestResourceLoader(ManifestResourceLoader.GetResourceLoader(typeof(MscClient).Assembly, "Museclone.Resources"));
         }
 

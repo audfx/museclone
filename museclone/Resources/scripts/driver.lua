@@ -13,4 +13,5 @@ function theori.layer.init()
     end);
 
     theori.layer.setInvalidForResume();
+    theori.layer.push("editor");
 end

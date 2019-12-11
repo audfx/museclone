@@ -6,7 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\scripts\driver.lua" />
+    <None Remove="Resources\scripts\editor\editor.lua" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\scripts\driver.lua" />
+    <EmbeddedResource Include="Resources\scripts\editor.lua" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\music-theori\music-theori\music-theori.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\scripts\editor\" />
   </ItemGroup>
 
 </Project>

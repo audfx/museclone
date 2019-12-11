@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,6 +10,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\museclone\museclone.csproj" />
     <ProjectReference Include="..\..\music-theori\music-theori\music-theori.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="x64\SDL2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
