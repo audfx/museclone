@@ -1,7 +1,13 @@
-﻿using theori;
-using theori.Resources;
+﻿using System;
+using System.IO;
 
 using MoonSharp.Interpreter;
+
+using theori;
+using theori.Charting;
+using theori.Resources;
+
+using Museclone.Charting.Conversions;
 
 namespace Museclone
 {
@@ -9,10 +15,16 @@ namespace Museclone
     {
         public readonly Table tblMsc;
 
-        public MscLayer(ClientResourceLocator locator, string layerPath, DynValue[] args)
+        public readonly Table tblMscCharts;
+
+        public MscLayer(ClientResourceLocator locator, string layerPath, params DynValue[] args)
             : base(locator, layerPath, args)
         {
-            tblMsc = m_script.NewTable();
+            m_script["msc"] = tblMsc = m_script.NewTable();
+
+            tblMsc["charts"] = tblMscCharts = m_script.NewTable();
+
+            tblMscCharts["loadXmlFile"] = (Func<string, ChartHandle>)(path => new ChartHandle(MusecaToTheori.CreateChartFromXml(File.OpenRead(path))));
         }
 
         protected override Layer CreateNewLuaLayer(string layerPath, DynValue[] args) =>
