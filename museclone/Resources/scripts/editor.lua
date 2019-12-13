@@ -1,4 +1,6 @@
 ﻿
+local chart;
+
 function theori.layer.doAsyncLoad()
 	return true;
 end
