@@ -27,7 +27,6 @@ namespace Museclone
             tblMscCharts["loadXmlFile"] = (Func<string, ChartHandle>)(path => new ChartHandle(m_resources, m_script, Client.DatabaseWorker, MusecaToTheori.CreateChartFromXml(File.OpenRead(path))));
         }
 
-        protected override Layer CreateNewLuaLayer(string layerPath, DynValue[] args) =>
-            new MscLayer(ResourceLocator, layerPath, args);
+        protected override Layer CreateNewLuaLayer(string layerPath, DynValue[] args) => new MscLayer(ResourceLocator, layerPath, args);
     }
 }
