@@ -49,7 +49,7 @@ namespace Museclone.Charting.Conversions
                     case XmlNodeType.EndElement:
                         if (reader.Name == "event")
                         {
-                            Logger.Log($"End event block: {curEvent!.StartTimeMillis}, {curEvent!.EndTimeMillis}, {curEvent!.Type}, {curEvent!.Kind}");
+                            //Logger.Log($"End event block: {curEvent!.StartTimeMillis}, {curEvent!.EndTimeMillis}, {curEvent!.Type}, {curEvent!.Kind}");
 
                             eventInfos.Add(curEvent);
                             curEvent = null;
@@ -99,7 +99,7 @@ namespace Museclone.Charting.Conversions
                                 }
                                 else if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "tempo")
                                 {
-                                    Logger.Log($"End tempo block: {time}, {deltaTime}, {value}, {bpm}");
+                                    //Logger.Log($"End tempo block: {time}, {deltaTime}, {value}, {bpm}");
 
                                     if (!timingInfo.TryGetValue(time, out var info))
                                         timingInfo[time] = info = new TimingInfo();
@@ -153,7 +153,7 @@ namespace Museclone.Charting.Conversions
                                 }
                                 else if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "sig_info")
                                 {
-                                    Logger.Log($"End sig_info block: {time}, {deltaTime}, {num}, {denomi}");
+                                    //Logger.Log($"End sig_info block: {time}, {deltaTime}, {num}, {denomi}");
 
                                     if (!timingInfo.TryGetValue(time, out var info))
                                         timingInfo[time] = info = new TimingInfo();
@@ -335,7 +335,7 @@ namespace Museclone.Charting.Conversions
                         var cp = chart.ControlPoints.GetOrCreate(where.Value, true);
                         cp.BeatsPerMinute = bpm;
                     }
-                    else Logger.Log($"Bpm change at beat {beatIndex} (timeMillis) could not be created for bpm {bpm}");
+                    //else Logger.Log($"Bpm change at beat {beatIndex} (timeMillis) could not be created for bpm {bpm}");
                 }
             }
 

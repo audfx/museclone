@@ -1,13 +1,10 @@
-﻿using System.IO;
-using System.Text;
-
-using theori;
-using theori.Charting.Serialization;
+﻿using theori;
 using theori.Database;
 using theori.Platform;
 using theori.Resources;
+using theori.Scripting;
 
-using Museclone.Charting.Conversions;
+using Museclone.Graphics;
 
 namespace Museclone
 {
@@ -19,6 +16,8 @@ namespace Museclone
         {
             DefaultResourceLocator.AddManifestResourceLoader(ManifestResourceLoader.GetResourceLoader(typeof(ClientResourceLocator).Assembly, "theori.Resources"));
             DefaultResourceLocator.AddManifestResourceLoader(ManifestResourceLoader.GetResourceLoader(typeof(MscClient).Assembly, "Museclone.Resources"));
+
+            ScriptService.RegisterType<Highway>();
         }
 
         public MscClient()
