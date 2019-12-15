@@ -1,8 +1,22 @@
 ﻿
+local isView2d = false;
+
 local chart;
 local highway;
 
-local timer = -6;
+local fakeAudio;
+local audio;
+
+local quantizeSteps = { 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 192 };
+local currentQuantizeIndex = 4;
+
+local function measureDuration() return chart.mostRecentControlPointAtTime(audio.position).measureDuration; end
+
+local function getQuantizeStep() return quantizeSteps[currentQuantizeIndex]; end
+local function quantizeAudio()
+	local step = measureDuration() / getQuantizeStep();
+	audio.position = math.floor(0.5 + audio.position / step) * step;
+end
 
 function theori.layer.doAsyncLoad()
 	chart = msc.charts.loadXmlFile("testchart.txt");
@@ -21,17 +35,52 @@ function theori.layer.doAsyncFinalize()
 		return false;
 	end
 
-	highway.lookAhead = 3;
+	highway.lookAhead = 2.5;
+
+	fakeAudio = theori.audio.createFakeAudio(41000, 2);
 
 	return true;
 end
 
 function theori.layer.init()
+	audio = fakeAudio;
+	audio.position = -3;
+
 	theori.input.keyboard.pressed:connect(function(key)
-		if (key == KeyCode.D) then
-			highway.lanesHaveDepth = not highway.lanesHaveDepth;
+		if (key == KeyCode.TAB) then
+			isView2d = not isView2d;
 		end
+
+		if (isView2d) then
+		else
+			if (key == KeyCode.D) then
+				highway.lanesHaveDepth = not highway.lanesHaveDepth;
+			end
+		end
+
+		if (key == KeyCode.SPACE) then
+			if (audio.isPlaying) then
+				audio.stop();
+				quantizeAudio();
+			else
+				audio.play();
+			end
+		end
+
+		--if (not audio.isPlaying) then
+			if (key == KeyCode.UP) then
+				audio.position = audio.position + measureDuration() / getQuantizeStep();
+			elseif (key == KeyCode.DOWN) then
+				audio.position = audio.position - measureDuration() / getQuantizeStep();
+			elseif (key == KeyCode.PAGEUP) then
+				audio.position = audio.position + measureDuration();
+			elseif (key == KeyCode.PAGEDOWN) then
+				audio.position = audio.position - measureDuration();
+			end
+		--end
 	end);
+
+	audio.play();
 end
 
 function theori.layer.destroy()
@@ -46,18 +95,23 @@ end
 function theori.layer.update(delta, total)
 	timer = total;
 
-	local width, height = theori.graphics.getViewportSize();
+	if (isView2d) then
+	else
+		local width, height = theori.graphics.getViewportSize();
+		if (width > height) then
+			highway.setViewport((width - height * 0.95) * 0.5, 0, height * 0.95);
+		else
+			highway.setViewport(0, (height - width) * 0.5 - width * 0.2, width);
+		end
 
-    if (width > height) then
-        highway.setViewport((width - height * 0.95) * 0.5, 0, height * 0.95);
-    else
-		highway.setViewport(0, (height - width) * 0.5 - width * 0.2, width);
+		highway.position = audio.position;
+		highway.update();
 	end
-
-	highway.position = timer;
-	highway.update();
 end
 
 function theori.layer.render()
-	highway.render();
+	if (isView2d) then
+	else
+		highway.render();
+	end
 end

@@ -18,6 +18,19 @@ namespace Museclone.Graphics
         private readonly RandomAccessChartWindow m_window;
         private readonly ClientResourceManager m_resources;
 
+        private Chart m_chart;
+        public Chart Chart
+        {
+            get => m_chart;
+            set
+            {
+                if (value == m_chart) return;
+
+                m_chart = value;
+                m_window.Chart = value;
+            }
+        }
+
         [MoonSharpHidden]
         public readonly BasicCamera Camera = new BasicCamera();
 
@@ -49,7 +62,7 @@ namespace Museclone.Graphics
         [MoonSharpHidden]
         public time_t TotalTime => m_window.LookBehind + m_window.LookAhead;
 
-        public bool LanesHaveDepth { get; set; } = true;
+        public bool LanesHaveDepth { get; set; } = false;
 
         public float Length { get; set; } = 10;
         public float Depth { get; set; } = 0.15f;
@@ -58,6 +71,8 @@ namespace Museclone.Graphics
         public Transform WorldTransform { get; private set; }
 
         private Drawable3D? m_flatHighwayDrawable;
+        
+        private Drawable3D? m_tickMeasureDrawable, m_tickBeatDrawable;
 
         private readonly Drawable3D[] m_laneLines = new Drawable3D[5];
         private Drawable3D? m_highwayBowl;
@@ -66,6 +81,7 @@ namespace Museclone.Graphics
 
         public Highway(ClientResourceLocator locator, Chart chart)
         {
+            m_chart = chart;
             m_resources = new ClientResourceManager(locator);
 
             m_window = new RandomAccessChartWindow(chart);
@@ -122,6 +138,53 @@ namespace Museclone.Graphics
                 Params = flatHighwayParams,
             };
             m_resources.Manage(m_flatHighwayDrawable.Mesh);
+
+            var tickMeasureParams = new MaterialParams();
+            tickMeasureParams["Color"] = new Vector4(1, 1, 0.5f, 0.7f);
+
+            var tickBeatParams = new MaterialParams();
+            tickBeatParams["Color"] = new Vector4(1, 1, 1, 0.25f);
+
+            var tickMesh = new Mesh();
+            tickMesh.SetIndices(0, 1, 2, 2, 1, 3,
+                                2, 3, 4, 4, 3, 5,
+                                4, 5, 6, 6, 5, 7,
+                                6, 7, 8, 8, 7, 9);
+
+            tickMesh.SetVertices(new[]
+            {
+                new VertexP3T2(new Vector3(-0.50f,  0,  0), Vector2.Zero),
+                new VertexP3T2(new Vector3(-0.50f,  0, -1), Vector2.Zero),
+
+                new VertexP3T2(new Vector3(-0.25f, -1,  0), Vector2.Zero),
+                new VertexP3T2(new Vector3(-0.25f, -1, -1), Vector2.Zero),
+
+                new VertexP3T2(new Vector3( 0.00f,  0,  0), Vector2.Zero),
+                new VertexP3T2(new Vector3( 0.00f,  0, -1), Vector2.Zero),
+
+                new VertexP3T2(new Vector3( 0.25f, -1,  0), Vector2.Zero),
+                new VertexP3T2(new Vector3( 0.25f, -1, -1), Vector2.Zero),
+
+                new VertexP3T2(new Vector3( 0.50f,  0,  0), Vector2.Zero),
+                new VertexP3T2(new Vector3( 0.50f,  0, -1), Vector2.Zero),
+            });
+            m_resources.Manage(tickMesh);
+
+            m_tickMeasureDrawable = new Drawable3D()
+            {
+                Texture = Texture.Empty,
+                Material = m_resources.AquireMaterial("materials/basic"),
+                Mesh = tickMesh,
+                Params = tickMeasureParams,
+            };
+
+            m_tickBeatDrawable = new Drawable3D()
+            {
+                Texture = Texture.Empty,
+                Material = m_resources.AquireMaterial("materials/basic"),
+                Mesh = tickMesh,
+                Params = tickBeatParams,
+            };
 
             var defaultLaneLineParams = new MaterialParams();
             defaultLaneLineParams["Color"] = new Vector4(1, 0.1f, 0.05f, 1);
@@ -255,13 +318,6 @@ namespace Museclone.Graphics
                 yVals[i] = (i % 2) == 0 ? 0 : (LanesHaveDepth ? -Depth : 0);
             yVals[5] = -Depth;
 
-            for (int i = 0; i < 5; i++)
-            {
-                float posX = (i / 4.0f) - 0.5f;
-
-                m_laneLines[i].DrawToQueue(queue, Transform.Scale(1, 1, Length) * Transform.Translation(posX, yVals[i], 0) * WorldTransform);
-            }
-
             void DrawLane(HybridLabel label)
             {
                 var entities = GetDrawables(label);
@@ -277,7 +333,36 @@ namespace Museclone.Graphics
                 }
             }
 
+            void DrawTick(time_t when, bool measure)
+            {
+                float pos = -(float)((when - StartTime) / TotalTime) * Length;
+                (measure ? m_tickMeasureDrawable : m_tickBeatDrawable).DrawToQueue(queue, Transform.Scale(1, (LanesHaveDepth ? Depth : 0), 0.01f) * Transform.Translation(0, 0, pos) * WorldTransform);
+            }
+
             DrawLane(5);
+
+            tick_t startTicks = Chart.CalcTickFromTime(StartTime);
+            tick_t maxTick = Chart.CalcTickFromTime(EndTime);
+
+            var currentPoint = Chart.ControlPoints.MostRecent(startTicks);
+            tick_t ticksPerBeat = 1.0 / currentPoint.BeatCount;
+
+            tick_t currentTick = MathL.Floor(0.5 + ((double)startTicks / (double)ticksPerBeat)) * ticksPerBeat;
+            if (currentTick < startTicks)
+                currentTick += ticksPerBeat;
+
+            while (currentTick < maxTick)
+            {
+                DrawTick(Chart.CalcTimeFromTick(currentTick), ((double)currentTick % 1) == 0);
+                currentTick += ticksPerBeat;
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                float posX = (i / 4.0f) - 0.5f;
+                m_laneLines[i].DrawToQueue(queue, Transform.Scale(1, 1, Length) * Transform.Translation(posX, yVals[i], 0) * WorldTransform);
+            }
+
             for (int i = 0; i < 5; i++)
                 DrawLane(i);
         }

@@ -225,13 +225,15 @@ namespace Museclone.Charting.Conversions
 
             #region Determine timing info from beat events
 
-            if (timingInfo.Count == 0)
+            if (false && timingInfo.Count == 0)
             {
-                var barEvents = from e in eventInfos where e.Kind == 11 && e.Kind == 12 select e;
+                var barEvents = from e in eventInfos where e.Kind == 11 || e.Kind == 12 select e;
 
                 // bpm related
-                long lastBeatDurationMillis = 60_000_00 / 120_00, lastBeatStartMillis = 0;
+                long lastBeatDurationMillis = 0, lastBeatStartMillis = 0, lastBpmStartMillis = 0;
                 int bpmTotalBeats = 0;
+                long runningBeatDurationTotal = 0;
+                int numBeatsCounted = 0;
 
                 // sig related
                 int n = 4;
@@ -248,15 +250,29 @@ namespace Museclone.Charting.Conversions
 
                     if (totalBeatsInMeasure > 0)
                     {
+                        lastBpmStartMillis = lastBeatStartMillis;
+
                         long beatDuration = millis - lastBeatStartMillis;
-                        // TODO(local): if this is within like a millisecond then maybe it's fine
-                        if (beatDuration != lastBeatDurationMillis)
-                            bpmChanges[bpmTotalBeats] = (lastBeatStartMillis, 60_000.0 / beatDuration);
+                        if (lastBeatDurationMillis != 0)
+                        {
+                            // TODO(local): if this is within like a millisecond then maybe it's fine
+                            if (Math.Abs(beatDuration - lastBeatDurationMillis) > 10)
+                            {
+                                bpmChanges[bpmTotalBeats] = (lastBpmStartMillis, 60_000.0 / (runningBeatDurationTotal / (double)numBeatsCounted));
+
+                                lastBpmStartMillis = lastBeatStartMillis;
+
+                                numBeatsCounted = 0;
+                                runningBeatDurationTotal = 0;
+                            }
+                        }
 
                         lastBeatDurationMillis = beatDuration;
                     }
 
                     bpmTotalBeats++;
+                    numBeatsCounted++;
+                    runningBeatDurationTotal += millis - lastBeatStartMillis;
                     lastBeatStartMillis = millis;
 
                     if (e.Kind == 11) // measure marker
@@ -296,6 +312,8 @@ namespace Museclone.Charting.Conversions
                     }
                 }
 
+                bpmChanges[bpmTotalBeats] = (lastBeatStartMillis, 60_000.0 / (runningBeatDurationTotal / (double)numBeatsCounted));
+
                 chart.Offset = sigOffsetMillis / 1_000.0;
                 foreach (var (measureIndex, (num, denom)) in timeSigChanges)
                 {
@@ -308,8 +326,8 @@ namespace Museclone.Charting.Conversions
                 foreach (var (beatIndex, (timeMillis, bpm)) in bpmChanges)
                 {
                     int beatsLeft = beatIndex;
-
                     tick_t? where = null;
+
                     foreach (var cp in chart.ControlPoints)
                     {
                         if (!cp.HasNext)
