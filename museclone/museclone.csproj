@@ -8,11 +8,15 @@
   <ItemGroup>
     <None Remove="Resources\scripts\driver.lua" />
     <None Remove="Resources\scripts\editor\editor.lua" />
+    <None Remove="Resources\textures\game\buttonHead.png" />
+    <None Remove="Resources\textures\game\buttonHold.png" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\scripts\driver.lua" />
     <EmbeddedResource Include="Resources\scripts\editor.lua" />
+    <EmbeddedResource Include="Resources\textures\game\buttonHead.png" />
+    <EmbeddedResource Include="Resources\textures\game\buttonHold.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 
 using MoonSharp.Interpreter;
-
+using Museclone.Charting;
 using theori;
 using theori.Charting;
 using theori.Charting.Playback;
@@ -17,6 +17,8 @@ namespace Museclone.Graphics
     {
         private readonly RandomAccessChartWindow m_window;
         private readonly ClientResourceManager m_resources;
+
+        private EntityDrawable3DStaticResources m_entity3dResources;
 
         private Chart m_chart;
         public Chart Chart
@@ -77,7 +79,7 @@ namespace Museclone.Graphics
         private readonly Drawable3D[] m_laneLines = new Drawable3D[5];
         private Drawable3D? m_highwayBowl;
         
-        private readonly Dictionary<HybridLabel, Dictionary<Entity, Drawable3D>> m_entityDrawables = new Dictionary<HybridLabel, Dictionary<Entity, Drawable3D>>();
+        private readonly Dictionary<HybridLabel, Dictionary<Entity, EntityDrawable3D>> m_entityDrawables = new Dictionary<HybridLabel, Dictionary<Entity, EntityDrawable3D>>();
 
         public Highway(ClientResourceLocator locator, Chart chart)
         {
@@ -91,10 +93,10 @@ namespace Museclone.Graphics
             m_window.EntityExit += Window_EntityExit;
         }
 
-        private Dictionary<Entity, Drawable3D> GetDrawables(HybridLabel laneLabel)
+        private Dictionary<Entity, EntityDrawable3D> GetDrawables(HybridLabel laneLabel)
         {
             if (!m_entityDrawables.TryGetValue(laneLabel, out var drawables))
-                drawables = m_entityDrawables[laneLabel] = new Dictionary<Entity, Drawable3D>();
+                drawables = m_entityDrawables[laneLabel] = new Dictionary<Entity, EntityDrawable3D>();
             return drawables;
         }
 
@@ -105,6 +107,8 @@ namespace Museclone.Graphics
             var dParams = new MaterialParams();
             dParams["Color"] = isPedal ? new Vector4(0.5f, 0.5f, 0.5f, 1) : new Vector4(1, 1, 1, 1);
 
+            var drawables = GetDrawables(laneLabel);
+#if false
             var drawable = GetDrawables(laneLabel)[entity] = new Drawable3D()
             {
                 Texture = Texture.Empty,
@@ -113,6 +117,19 @@ namespace Museclone.Graphics
                 Params = dParams,
             };
             m_resources.Manage(drawable.Mesh);
+#endif
+
+            if (isPedal)
+            {
+
+            }
+            else if (entity is ButtonEntity button)
+            {
+                if (button.IsInstant)
+                    drawables[entity] = new ButtonChipRenderState3D(button, m_resources, m_entity3dResources);
+                else drawables[entity] = new ButtonHoldRenderState3D(button, m_resources, m_entity3dResources);
+            }
+
         }
 
         private void Window_EntityExit(HybridLabel laneLabel, Entity entity)
@@ -122,11 +139,22 @@ namespace Museclone.Graphics
 
         public bool AsyncLoad()
         {
+            m_resources.QueueTextureLoad("textures/game/buttonHead");
+            m_resources.QueueTextureLoad("textures/game/buttonHold");
+
+            if (!m_resources.LoadAll())
+                return false;
+
             return true;
         }
 
         public bool AsyncFinalize()
         {
+            if (!m_resources.FinalizeLoad())
+                return false;
+
+            m_entity3dResources = new EntityDrawable3DStaticResources();
+
             var flatHighwayParams = new MaterialParams();
             flatHighwayParams["Color"] = new Vector4(1, 1, 1, 0.05f);
 
@@ -288,7 +316,7 @@ namespace Museclone.Graphics
             float minClipDist = Math.Min(bottomClipDistance, topClipDistance);
             float maxClipDist = Math.Max(bottomClipDistance, topClipDistance);
 
-            float clipNear = Math.Max(0.01f, minClipDist);
+            float clipNear = Math.Max(0.01f, minClipDist - 0.12f);
             float clipFar = maxClipDist;
 
             // TODO(local): see if the default epsilon is enough? There's no easy way to check clip planes manually right now
@@ -327,9 +355,9 @@ namespace Museclone.Graphics
                     float posX = i == 5 ? 0 : (i / 4.0f) - 0.5f;
 
                     float ePos = -(float)((entity.AbsolutePosition - StartTime) / TotalTime) * Length;
-                    float eLen = entity.IsInstant ? 0.175f : (float)(entity.AbsoluteDuration / TotalTime) * Length;
+                    float eLen = entity.IsInstant ? 0 : (float)(entity.AbsoluteDuration / TotalTime) * Length;
 
-                    drawable.DrawToQueue(queue, Transform.Scale(1, 1, eLen) * Transform.Translation(posX, yVals[i], ePos) * WorldTransform);
+                    drawable.Render(queue, Transform.Translation(posX, yVals[i], ePos) * WorldTransform, eLen);
                 }
             }
 
