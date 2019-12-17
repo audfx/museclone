@@ -8,7 +8,7 @@ local fakeAudio;
 local audio;
 
 local quantizeSteps = { 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 192 };
-local currentQuantizeIndex = 4;
+local currentQuantizeIndex = 8;
 
 local function measureDuration() return chart.mostRecentControlPointAtTime(audio.position).measureDuration; end
 
@@ -35,7 +35,7 @@ function theori.layer.doAsyncFinalize()
 		return false;
 	end
 
-	highway.lookAhead = 2.5;
+	highway.lookAhead = 3;
 
 	fakeAudio = theori.audio.createFakeAudio(41000, 2);
 
@@ -44,7 +44,7 @@ end
 
 function theori.layer.init()
 	audio = fakeAudio;
-	audio.position = -3;
+	audio.position = chart.timeStart;
 
 	theori.input.keyboard.pressed:connect(function(key)
 		if (key == KeyCode.TAB) then
@@ -79,8 +79,6 @@ function theori.layer.init()
 			end
 		--end
 	end);
-
-	audio.play();
 end
 
 function theori.layer.destroy()
@@ -99,9 +97,9 @@ function theori.layer.update(delta, total)
 	else
 		local width, height = theori.graphics.getViewportSize();
 		if (width > height) then
-			highway.setViewport((width - height * 0.95) * 0.5, 0, height * 0.95);
+			highway.setViewport((width - height * 0.7) * 0.5, height * 0.2, height * 0.7);
 		else
-			highway.setViewport(0, (height - width) * 0.5 - width * 0.2, width);
+			highway.setViewport(0, (height - width) - width * 0.1, width);
 		end
 
 		highway.position = audio.position;

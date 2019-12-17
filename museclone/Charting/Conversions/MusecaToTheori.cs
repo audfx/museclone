@@ -385,20 +385,20 @@ namespace Museclone.Charting.Conversions
                         // large spinner
                         case 2:
                         {
-                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks);
+                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks, durTicks);
                             e.Large = true;
                         } break;
                         // large spinner left
                         case 3:
                         {
-                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks);
+                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks, durTicks);
                             e.Direction = LinearDirection.Left;
                             e.Large = true;
                         } break;
                         // large spinner right
                         case 4:
                         {
-                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks);
+                            var e = chart[entity.Type % 6].Add<SpinnerEntity>(startTicks, durTicks);
                             e.Direction = LinearDirection.Right;
                             e.Large = true;
                         } break;

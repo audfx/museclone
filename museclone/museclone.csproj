@@ -6,17 +6,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\materials\hold.fs" />
+    <None Remove="Resources\materials\hold.vs" />
     <None Remove="Resources\scripts\driver.lua" />
     <None Remove="Resources\scripts\editor\editor.lua" />
     <None Remove="Resources\textures\game\buttonHead.png" />
     <None Remove="Resources\textures\game\buttonHold.png" />
+    <None Remove="Resources\textures\game\criticalPoint.png" />
+    <None Remove="Resources\textures\game\pedal.png" />
+    <None Remove="Resources\textures\game\pedalHead.png" />
+    <None Remove="Resources\textures\game\pedalHold.png" />
+    <None Remove="Resources\textures\game\spinner.png" />
+    <None Remove="Resources\textures\game\spinnerArrow.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\materials\hold.fs" />
+    <EmbeddedResource Include="Resources\materials\hold.vs" />
     <EmbeddedResource Include="Resources\scripts\driver.lua" />
     <EmbeddedResource Include="Resources\scripts\editor.lua" />
     <EmbeddedResource Include="Resources\textures\game\buttonHead.png" />
     <EmbeddedResource Include="Resources\textures\game\buttonHold.png" />
+    <EmbeddedResource Include="Resources\textures\game\criticalPoint.png" />
+    <EmbeddedResource Include="Resources\textures\game\pedal.png" />
+    <EmbeddedResource Include="Resources\textures\game\pedalHead.png" />
+    <EmbeddedResource Include="Resources\textures\game\pedalHold.png" />
+    <EmbeddedResource Include="Resources\textures\game\spinner.png" />
+    <EmbeddedResource Include="Resources\textures\game\spinnerArrow.png" />
   </ItemGroup>
 
   <ItemGroup>
