@@ -1,8 +1,16 @@
 ﻿
+local TOOL_NORMAL = 1;
+local TOOL_SMALL_SPIN = 2;
+local TOOL_LARGE_SPIN = 3;
+
+local currentEntity = { nil, nil, nil, nil, nil, nil };
+
 local isView2d = false;
 
 local chart;
 local highway;
+
+local tool = TOOL_NORMAL;
 
 local fakeAudio;
 local audio;
@@ -18,9 +26,67 @@ local function quantizeAudio()
 	audio.position = math.floor(0.5 + audio.position / step) * step;
 end
 
+local function createEntityForLane(lane)
+	if (tool == TOOL_NORMAL) then
+		return theori.charts.newEntity("Museclone.Button");
+	elseif (lane < 5 and (tool == TOOL_SMALL_SPIN or tool == LARGE_SPIN)) then
+		return theori.charts.newEntity("Museclone.Spinner");
+	end
+
+	return nil;
+end
+
+local function laneKeyPressed(lane)
+	if (currentEntity[lane]) then return; end
+
+	isPlacingEntity = true;
+	print("pressed lane " .. tostring(lane));
+	-- assumes the time is currently quantized
+	local time = audio.position;
+	local tick = chart.calcTickFromTime(time);
+
+	local entity = chart.getEntityAtTick(lane, tick, true);
+	if (entity) then
+		print("  remove entity");
+		chart.removeEntity(entity);
+	else
+		local newEntity = createEntityForLane(lane);
+		print("  create entity:" .. tostring(newEntity));
+		if (newEntity) then
+			newEntity.position = tick;
+
+			chart.addEntity(lane, newEntity);
+			currentEntity[lane] = newEntity;
+		end
+	end
+
+	highway.refresh();
+end
+
+local function laneKeyReleased(lane)
+	if (not currentEntity[lane]) then return; end
+
+	currentEntity[lane] = nil;
+end
+
+local function adjustEntityDurations()
+	local tick = chart.calcTickFromTime(audio.position);
+	for lane, entity in next, currentEntity do
+		entity.duration = math.max(0, tick - entity.position);
+		print(entity.duration);
+	end
+	highway.refresh();
+end
+
+local function releaseEdits()
+	for lane, entity in next, currentEntity do
+		currentEntity[lane] = nil;
+	end
+end
+
 function theori.layer.doAsyncLoad()
-	chart = msc.charts.loadXmlFile("testchart.txt");
-	--chart = msc.charts.createNew();
+	--chart = msc.charts.loadXmlFile("testchart.txt");
+	chart = msc.charts.create();
 
 	highway = msc.graphics.createHighway(chart);
 	if (not highway.asyncLoad()) then
@@ -58,26 +124,67 @@ function theori.layer.init()
 			end
 		end
 
+		if (not audio.isPlaying) then
+			if (key == KeyCode.D1) then
+				laneKeyPressed(0);
+			elseif (key == KeyCode.D2) then
+				laneKeyPressed(1);
+			elseif (key == KeyCode.D3) then
+				laneKeyPressed(2);
+			elseif (key == KeyCode.D4) then
+				laneKeyPressed(3);
+			elseif (key == KeyCode.D5) then
+				laneKeyPressed(4);
+			elseif (key == KeyCode.BACKQUOTE) then
+				laneKeyPressed(5);
+			end
+		end
+
 		if (key == KeyCode.SPACE) then
+			releaseEdits();
 			if (audio.isPlaying) then
 				audio.stop();
 				quantizeAudio();
 			else
 				audio.play();
 			end
+		elseif (key == KeyCode.UP) then
+			audio.position = audio.position + measureDuration() / getQuantizeStep();
+			adjustEntityDurations();
+		elseif (key == KeyCode.DOWN) then
+			audio.position = audio.position - measureDuration() / getQuantizeStep();
+			adjustEntityDurations();
+		elseif (key == KeyCode.PAGEUP) then
+			audio.position = audio.position + measureDuration();
+			adjustEntityDurations();
+		elseif (key == KeyCode.PAGEDOWN) then
+			audio.position = audio.position - measureDuration();
+			adjustEntityDurations();
+		elseif (key == KeyCode.END) then
+			audio.position = chart.TimeStart;
+			adjustEntityDurations();
+		elseif (key == KeyCode.HOME) then
+			audio.position = chart.TimeEnd;
+			adjustEntityDurations();
 		end
+	end);
 
-		--if (not audio.isPlaying) then
-			if (key == KeyCode.UP) then
-				audio.position = audio.position + measureDuration() / getQuantizeStep();
-			elseif (key == KeyCode.DOWN) then
-				audio.position = audio.position - measureDuration() / getQuantizeStep();
-			elseif (key == KeyCode.PAGEUP) then
-				audio.position = audio.position + measureDuration();
-			elseif (key == KeyCode.PAGEDOWN) then
-				audio.position = audio.position - measureDuration();
+	theori.input.keyboard.released:connect(function(key)
+		if (not audio.isPlaying) then
+			if (key == KeyCode.D1) then
+				laneKeyReleased(0);
+			elseif (key == KeyCode.D2) then
+				laneKeyReleased(1);
+			elseif (key == KeyCode.D3) then
+				laneKeyReleased(2);
+			elseif (key == KeyCode.D4) then
+				laneKeyReleased(3);
+			elseif (key == KeyCode.D5) then
+				laneKeyReleased(4);
+			elseif (key == KeyCode.BACKQUOTE) then
+				laneKeyReleased(5);
 			end
-		--end
+		end
 	end);
 end
 

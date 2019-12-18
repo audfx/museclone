@@ -353,7 +353,7 @@ namespace Museclone.Graphics
 
     internal class PedalRenderState3D : HoldRenderState3D
     {
-        const float Aspect = 2.0f / 6.75f;
+        const float Aspect = 2.0f / 6.0f;
 
         public new ButtonEntity Entity => (ButtonEntity)base.Entity;
 
@@ -363,14 +363,12 @@ namespace Museclone.Graphics
         public PedalRenderState3D(ButtonEntity entity, ClientResourceManager resources, EntityDrawable3DStaticResources staticResources)
             : base(entity)
         {
-            Debug.Assert(!entity.IsInstant, "Instant object passed to render state which expects a hold");
-
             var holdParams = new MaterialParams();
             holdParams["Color"] = new Vector4(1, 0.5f, 0.5f, 1);
             var headParams = new MaterialParams();
             headParams["Color"] = new Vector4(1, 1, 1, 1);
 
-            m_size = 0.5f * 0.675f;
+            m_size = 0.5f * 0.6f;
 
             m_hold = new Drawable3D()
             {

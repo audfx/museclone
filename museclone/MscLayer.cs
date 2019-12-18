@@ -28,7 +28,7 @@ namespace Museclone
             tblMsc["charts"] = tblMscCharts = m_script.NewTable();
             tblMsc["graphics"] = tblMscGraphics = m_script.NewTable();
 
-            tblMscCharts["createNew"] = (Func<ChartHandle>)(() => new ChartHandle(m_resources, m_script, Client.DatabaseWorker, MusecloneChartFactory.Instance.CreateNew()));
+            tblMscCharts["create"] = (Func<ChartHandle>)(() => new ChartHandle(m_resources, m_script, Client.DatabaseWorker, MusecloneChartFactory.Instance.CreateNew()));
             tblMscCharts["loadXmlFile"] = (Func<string, ChartHandle>)(path => new ChartHandle(m_resources, m_script, Client.DatabaseWorker, MusecaToTheori.CreateChartFromXml(File.OpenRead(path))));
 
             tblMscGraphics["createHighway"] = (Func<ChartHandle, Highway>)(chart => new Highway(locator, chart.Chart));

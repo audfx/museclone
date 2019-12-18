@@ -336,9 +336,11 @@ namespace Museclone.Graphics
                 }
             }
 
-            m_window.Refresh();
+            m_window.Update();
             return true;
         }
+
+        public void Refresh() => m_window.Refresh();
 
         public void SetViewport(float x, float y, float size) => Viewport = ((int)x, (int)y, (int)size);
 
@@ -473,7 +475,7 @@ namespace Museclone.Graphics
             GatherLaneEntities(5);
             DrawLaneEntities();
 
-            m_pedal.DrawToQueue(queue, Transform.Scale(0.675f, 1, 0.1f) * Transform.Translation(0, -Depth, 0) * WorldTransform);
+            m_pedal.DrawToQueue(queue, Transform.Scale(0.6f, 1, 0.1f) * Transform.Translation(0, -Depth, 0) * WorldTransform);
 
             tick_t startTicks = Chart.CalcTickFromTime(StartTime);
             tick_t maxTick = Chart.CalcTickFromTime(EndTime);
@@ -524,7 +526,10 @@ namespace Museclone.Graphics
                         if (b.Lane == 0 || b.Lane == 2 || b.Lane == 4)
                             return -1;
                     }
-                    return (int)b.Lane - (int)a.Lane;
+
+                    if (b.Lane == 0 || b.Lane == 2 || b.Lane == 4)
+                        return (int)b.Lane - (int)a.Lane;
+                    else return (int)a.Lane - (int)b.Lane;
                 });
                 for (int i = 0; i < entities.Count; i++)
                 {
