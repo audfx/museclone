@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "museclone", "museclone\museclone.csproj", "{C75E0E01-3A38-49F6-A527-FAB8219B732D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "museclone", "museclone\museclone.csproj", "{C75E0E01-3A38-49F6-A527-FAB8219B732D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "music-theori", "music-theori", "{A4FB857C-2728-4A4D-9064-B7EB90C05F0E}"
 EndProject
@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "music-theori", "music-theor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{989CAB4D-6B16-41D1-B2F7-872B51F00163}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "msc-core3.1", "Clients\msc-core3.1\msc-core3.1.csproj", "{C526F14F-51C9-41CE-ADA3-AD63CF724408}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "msc-core3.1", "Clients\msc-core3.1\msc-core3.1.csproj", "{C526F14F-51C9-41CE-ADA3-AD63CF724408}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Debug|x64.Build.0 = Debug|Any CPU
+		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Debug|Any CPU.Build.0 = Debug|x64
+		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Debug|x64.ActiveCfg = Debug|x64
+		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Debug|x64.Build.0 = Debug|x64
 		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Deploy|Any CPU.ActiveCfg = Debug|Any CPU
 		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Deploy|Any CPU.Build.0 = Debug|Any CPU
 		{C75E0E01-3A38-49F6-A527-FAB8219B732D}.Deploy|x64.ActiveCfg = Debug|Any CPU
@@ -45,10 +45,10 @@ Global
 		{26DBBE7C-9F30-40AC-A98E-92BF0BC46339}.Release|Any CPU.ActiveCfg = Release|x64
 		{26DBBE7C-9F30-40AC-A98E-92BF0BC46339}.Release|x64.ActiveCfg = Release|x64
 		{26DBBE7C-9F30-40AC-A98E-92BF0BC46339}.Release|x64.Build.0 = Release|x64
-		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Debug|x64.Build.0 = Debug|Any CPU
+		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Debug|Any CPU.Build.0 = Debug|x64
+		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Debug|x64.ActiveCfg = Debug|x64
+		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Debug|x64.Build.0 = Debug|x64
 		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Deploy|Any CPU.ActiveCfg = Debug|Any CPU
 		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Deploy|Any CPU.Build.0 = Debug|Any CPU
 		{C526F14F-51C9-41CE-ADA3-AD63CF724408}.Deploy|x64.ActiveCfg = Debug|Any CPU

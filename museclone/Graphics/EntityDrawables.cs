@@ -23,11 +23,21 @@ namespace Museclone.Graphics
         public readonly Mesh SmallSpinnerMesh;
         public readonly Mesh LargeSpinnerMesh;
         public readonly Mesh LargeSpinnerDurationMesh;
-        public readonly Mesh SpinnerArrowMesh;
 
         public EntityDrawable3DStaticResources()
         {
             ButtonHeadMesh = new Mesh();
+            ButtonHoldMesh = new Mesh();
+            PedalHeadMesh = new Mesh();
+            PedalHoldMesh = new Mesh();
+            SmallSpinnerMesh = new Mesh();
+            LargeSpinnerMesh = new Mesh();
+
+            LargeSpinnerDurationMesh = Mesh.CreatePlane(Vector3.UnitX, Vector3.UnitZ, 1, 1, Anchor.BottomCenter);
+        }
+
+        public void CreateResources()
+        {
             ButtonHeadMesh.SetIndices(0, 1, 2, 0, 2, 3);
             ButtonHeadMesh.SetVertices(new[]
             {
@@ -37,7 +47,6 @@ namespace Museclone.Graphics
                 new VertexP3T2(new Vector3( 0, -1, 0), new Vector2(0.5f, 1)),
             });
 
-            ButtonHoldMesh = new Mesh();
             ButtonHoldMesh.SetIndices(0, 1, 2, 2, 1, 3,
                                       2, 3, 4, 4, 3, 5);
             ButtonHoldMesh.SetVertices(new[]
@@ -52,7 +61,6 @@ namespace Museclone.Graphics
                 new VertexP3T2(new Vector3( 0.5f, 0, -1), new Vector2(1, 0)),
             });
 
-            PedalHeadMesh = new Mesh();
             PedalHeadMesh.SetIndices(0, 1, 2, 0, 2, 3);
             PedalHeadMesh.SetVertices(new[]
             {
@@ -62,7 +70,6 @@ namespace Museclone.Graphics
                 new VertexP3T2(new Vector3(-1, -1, 0), new Vector2(0, 1)),
             });
 
-            PedalHoldMesh = new Mesh();
             PedalHoldMesh.SetIndices(0, 1, 2, 2, 1, 3);
             PedalHoldMesh.SetVertices(new[]
             {
@@ -145,7 +152,6 @@ namespace Museclone.Graphics
                     }
                 }
 
-                SmallSpinnerMesh = new Mesh();
                 SmallSpinnerMesh.SetIndices(indices.ToArray());
                 SmallSpinnerMesh.SetVertices(verticies.ToArray());
             }
@@ -222,12 +228,9 @@ namespace Museclone.Graphics
                     }
                 }
 
-                LargeSpinnerMesh = new Mesh();
                 LargeSpinnerMesh.SetIndices(indices.ToArray());
                 LargeSpinnerMesh.SetVertices(verticies.ToArray());
             }
-
-            LargeSpinnerDurationMesh = Mesh.CreatePlane(Vector3.UnitX, Vector3.UnitZ, 1, 1, Anchor.BottomCenter);
         }
 
         protected override void DisposeManaged()

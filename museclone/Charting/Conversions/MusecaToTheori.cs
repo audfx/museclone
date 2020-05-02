@@ -51,7 +51,7 @@ namespace Museclone.Charting.Conversions
                         {
                             //Logger.Log($"End event block: {curEvent!.StartTimeMillis}, {curEvent!.EndTimeMillis}, {curEvent!.Type}, {curEvent!.Kind}");
 
-                            eventInfos.Add(curEvent);
+                            eventInfos.Add(curEvent!);
                             curEvent = null;
                         }
                         break;

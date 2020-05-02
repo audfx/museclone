@@ -22,7 +22,7 @@ namespace Museclone.Graphics
         private readonly RandomAccessChartWindow m_window;
         private readonly ClientResourceManager m_resources;
 
-        private EntityDrawable3DStaticResources m_entity3dResources;
+        private EntityDrawable3DStaticResources? m_entity3dResources;
 
         private Chart m_chart;
         public Chart Chart
@@ -73,7 +73,6 @@ namespace Museclone.Graphics
         public Transform WorldTransform { get; private set; }
 
         private Drawable3D? m_flatHighwayDrawable;
-        
         private Drawable3D? m_tickMeasureDrawable, m_tickBeatDrawable;
 
         private readonly Drawable3D[] m_laneLines = new Drawable3D[5];
@@ -111,31 +110,20 @@ namespace Museclone.Graphics
             dParams["Color"] = isPedal ? new Vector4(0.5f, 0.5f, 0.5f, 1) : new Vector4(1, 1, 1, 1);
 
             var drawables = GetDrawables(laneLabel);
-#if false
-            var drawable = GetDrawables(laneLabel)[entity] = new Drawable3D()
-            {
-                Texture = Texture.Empty,
-                Material = m_resources.AquireMaterial("materials/basic"),
-                Mesh = Mesh.CreatePlane(Vector3.UnitX, Vector3.UnitZ, isPedal ? 0.45f : 0.175f, 1, Anchor.BottomCenter),
-                Params = dParams,
-            };
-            m_resources.Manage(drawable.Mesh);
-#endif
-
             if (entity is ButtonEntity button)
             {
                 if (isPedal)
-                    drawables[entity] = new PedalRenderState3D((ButtonEntity)entity, m_resources, m_entity3dResources);
+                    drawables[entity] = new PedalRenderState3D((ButtonEntity)entity, m_resources, m_entity3dResources!);
                 else
                 {
                     if (button.IsInstant)
-                        drawables[entity] = new ButtonChipRenderState3D(button, m_resources, m_entity3dResources);
-                    else drawables[entity] = new ButtonHoldRenderState3D(button, m_resources, m_entity3dResources);
+                        drawables[entity] = new ButtonChipRenderState3D(button, m_resources, m_entity3dResources!);
+                    else drawables[entity] = new ButtonHoldRenderState3D(button, m_resources, m_entity3dResources!);
                 }
             }
             else if (entity is SpinnerEntity spinner)
             {
-                drawables[entity] = new SpinnerRenderState3D(spinner, m_resources, m_entity3dResources);
+                drawables[entity] = new SpinnerRenderState3D(spinner, m_resources, m_entity3dResources!);
             }
         }
 
@@ -170,6 +158,7 @@ namespace Museclone.Graphics
                 return false;
 
             m_entity3dResources = new EntityDrawable3DStaticResources();
+            m_entity3dResources.CreateResources();
 
             var flatHighwayParams = new MaterialParams();
             flatHighwayParams["Color"] = new Vector4(1, 1, 1, 0.05f);
@@ -469,13 +458,13 @@ namespace Museclone.Graphics
             void DrawTick(time_t when, bool measure)
             {
                 float pos = -(float)((when - Position) / LookAhead) * Length;
-                (measure ? m_tickMeasureDrawable : m_tickBeatDrawable).DrawToQueue(queue, Transform.Scale(1, (LanesHaveDepth ? Depth : 0), 0.0035f) * Transform.Translation(0, 0, pos) * WorldTransform);
+                (measure ? m_tickMeasureDrawable : m_tickBeatDrawable)!.DrawToQueue(queue, Transform.Scale(1, (LanesHaveDepth ? Depth : 0), 0.0035f) * Transform.Translation(0, 0, pos) * WorldTransform);
             }
 
             GatherLaneEntities(5);
             DrawLaneEntities();
 
-            m_pedal.DrawToQueue(queue, Transform.Scale(0.6f, 1, 0.1f) * Transform.Translation(0, -Depth, 0) * WorldTransform);
+            m_pedal!.DrawToQueue(queue, Transform.Scale(0.6f, 1, 0.1f) * Transform.Translation(0, -Depth, 0) * WorldTransform);
 
             tick_t startTicks = Chart.CalcTickFromTime(StartTime);
             tick_t maxTick = Chart.CalcTickFromTime(EndTime);
@@ -497,7 +486,7 @@ namespace Museclone.Graphics
             {
                 float posX = (i / 4.0f) - 0.5f;
                 m_laneLines[i].DrawToQueue(queue, Transform.Scale(1, 1, Length) * Transform.Translation(posX, yVals[i], 0) * WorldTransform);
-                m_criticalPoint.DrawToQueue(queue, Transform.Scale(0.2f, 1, 0.15f) * Transform.Translation(posX, yVals[i], 0) * WorldTransform);
+                m_criticalPoint!.DrawToQueue(queue, Transform.Scale(0.2f, 1, 0.15f) * Transform.Translation(posX, yVals[i], 0) * WorldTransform);
             }
 
             for (int i = 0; i < 5; i++)
@@ -547,9 +536,9 @@ namespace Museclone.Graphics
                     }
 
                     float ePos = -(float)((entities[i].AbsolutePosition - Position) / LookAhead) * Length;
-                    m_joiningDrawables[(min, max)].DrawToQueue(queue, Transform.Scale(1, LanesHaveDepth ? Depth : 0, 0.005f) * Transform.Translation(0, 0, ePos + 0.0225f) * WorldTransform);
-                    m_joiningDrawables[(min, max)].DrawToQueue(queue, Transform.Scale(1, LanesHaveDepth ? Depth : 0, 0.005f) * Transform.Translation(0, 0, ePos) * WorldTransform);
-                    m_joiningDrawables[(min, max)].DrawToQueue(queue, Transform.Scale(1, LanesHaveDepth ? Depth : 0, 0.005f) * Transform.Translation(0, 0, ePos - 0.0225f) * WorldTransform);
+                    m_joiningDrawables[(min, max)].DrawToQueue(queue, Transform.Scale(1, LanesHaveDepth ? Depth : 0, 0.0075f) * Transform.Translation(0, 0, ePos + 0.03f) * WorldTransform);
+                    m_joiningDrawables[(min, max)].DrawToQueue(queue, Transform.Scale(1, LanesHaveDepth ? Depth : 0, 0.0075f) * Transform.Translation(0, 0, ePos) * WorldTransform);
+                    m_joiningDrawables[(min, max)].DrawToQueue(queue, Transform.Scale(1, LanesHaveDepth ? Depth : 0, 0.0075f) * Transform.Translation(0, 0, ePos - 0.03f) * WorldTransform);
                 }
             }
             m_joinedEntities.Clear();
