@@ -54,7 +54,10 @@ local function quantizeTimeRound(time)
 	return math.floor(0.5 + time / step) * step;
 end
 
-local function quantizeAudio() return audio.position = quantizeTimeRound(audio.position); end
+local function quantizeAudio()
+	audio.position = quantizeTimeRound(audio.position);
+	return audio.position;
+end
 
 local function getColumnTickRange(columnIndex)
 	-- todo(local): have this actually calculate where columns are
